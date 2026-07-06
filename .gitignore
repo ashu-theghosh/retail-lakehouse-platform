@@ -22,3 +22,6 @@ __pycache__/
 
 # Temporary files
 *.tmp
+
+# Generated sample data
+sample_data/raw/
