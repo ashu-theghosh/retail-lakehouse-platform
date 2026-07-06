@@ -25,3 +25,6 @@ __pycache__/
 
 # Generated sample data
 sample_data/raw/
+
+aws/
+awscliv2.zip
