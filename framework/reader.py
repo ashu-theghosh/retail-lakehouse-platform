@@ -1,9 +1,8 @@
 def read_json(spark, raw_path):
-        df=spark.read.format("json")\
+        return spark.read.format("json")\
                 .option("multiLine", "true")\
                 .option("mode","PERMISSIVE")\
                 .load(raw_path)
-        return df
     
 def separate_corrupt_records(df):
       if "_corrupt_record" in df.columns:
