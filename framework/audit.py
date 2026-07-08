@@ -4,7 +4,7 @@ def add_audit_columns_clean(df,source_system,batch_id,source_file_column="_metad
             .withColumn("batch_id",lit(batch_id)) \
             .withColumn("source_file",col(source_file_column))
 
-def prepare_bad_records(df,batch_id,pipeline_name,source_system,table_name,failure_reason,source_file_column="_metadata.file_path",):
+def prepare_bad_records(df,batch_id,pipeline_name,source_system,table_name,failure_reason,source_file_column="_metadata.file_path"):
     return df.withColumn("batch_id", lit(batch_id))\
         .withColumn("pipeline_name", lit(pipeline_name))\
         .withColumn("source_system", lit(source_system.upper()))\

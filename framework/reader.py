@@ -1,4 +1,4 @@
-def read_json(raw_path):
+def read_json(spark, raw_path):
         df=spark.read.format("json")\
                 .option("multiLine", "true")\
                 .option("mode","PERMISSIVE")\
