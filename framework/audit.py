@@ -1,5 +1,7 @@
-def add_audit_columns_clean(df,source_system,batch_id,source_file_column="_metadata.file_path"):
-    return df.withColumn("ingestion_timestamp",current_timestamp()) \
+from pyspark.sql.functions import *
+
+def add_audit_columns_clean(df,ingestion_timestamp=current_timestamp(),source_system,batch_id,source_file_column="_metadata.file_path"):
+    return df.withColumn("ingestion_timestamp", ingestion_timestamp) \
             .withColumn("source_system",lit(source_system.upper())) \
             .withColumn("batch_id",lit(batch_id)) \
             .withColumn("source_file",col(source_file_column))

@@ -1,3 +1,5 @@
+from pyspark.sql.functions import *
+
 def read_json(spark, raw_path):
         return spark.read.format("json")\
                 .option("multiLine", "true")\
