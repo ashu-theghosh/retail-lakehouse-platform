@@ -28,7 +28,7 @@ def prepare_bad_records(df,batch_id,pipeline_name,source_system,table_name,failu
 
 
 
-def combine_bad_records(df1,df2,corrupt_count,batch_id,pipeline_name,source_system,table_name):
+def combine_bad_records(business_bad_df,corrupt_bad_df,corrupt_count,batch_id,pipeline_name,source_system,table_name):
     business_bad_df=prepare_bad_records(df1,batch_id,pipeline_name,source_system,table_name,"MANDATORY_FIELD_VALIDATION_FAILED")
     
     if df2 is not None and corrupt_count>0:
