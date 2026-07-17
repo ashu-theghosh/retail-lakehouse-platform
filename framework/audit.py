@@ -25,3 +25,14 @@ def prepare_bad_records(df,batch_id,pipeline_name,source_system,table_name,failu
         col("ingestion_timestamp"),
         col("raw_record")
         )
+
+
+
+def combine_bad_records(df1,df2,batch_id,pipeline_name,source_system,table_name):
+    business_bad_df=prepare_bad_records(df1,batch_id,pipeline_name,source_system,table_name,"MANDATORY_FIELDS_MISSING")
+    
+    if df2 is not None and df2.count()>0:
+        corrupt_bad_df=prepare_bad_records(df2,batch_id,pipeline_name,source_system,table_name,"CORRUPT_RECORD")
+        return business_bad_df.unionByname(corrupt_bad_df,allowMissingColumns=True)
+    else:
+        return business_bad_df
