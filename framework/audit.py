@@ -28,11 +28,11 @@ def prepare_bad_records(df,batch_id,pipeline_name,source_system,table_name,failu
 
 
 
-def combine_bad_records(df1,df2,batch_id,pipeline_name,source_system,table_name):
-    business_bad_df=prepare_bad_records(df1,batch_id,pipeline_name,source_system,table_name,"MANDATORY_FIELDS_MISSING")
+def combine_bad_records(df1,df2,corrupt_count,batch_id,pipeline_name,source_system,table_name):
+    business_bad_df=prepare_bad_records(df1,batch_id,pipeline_name,source_system,table_name,"MANDATORY_FIELD_VALIDATION_FAILED")
     
-    if df2 is not None and df2.count()>0:
-        corrupt_bad_df=prepare_bad_records(df2,batch_id,pipeline_name,source_system,table_name,"CORRUPT_RECORD")
-        return business_bad_df.unionByname(corrupt_bad_df,allowMissingColumns=True)
+    if df2 is not None and corrupt_count>0:
+        corrupt_bad_df=prepare_bad_records(df2,batch_id,pipeline_name,source_system,table_name,"CORRUPT_JSON")
+        return business_bad_df.unionByName(corrupt_bad_df,allowMissingColumns=True)
     else:
         return business_bad_df
