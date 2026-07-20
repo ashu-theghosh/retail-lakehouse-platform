@@ -59,7 +59,7 @@ def update_completed(batch_id,total_records,good_records,bad_records):
         conn.commit()
         cur.close()
 
-def update_failed(batch_id,total_records,good_records,bad_records,error_message):
+def update_failed(batch_id,error_message,total_records=0,good_records=0,bad_records=0,):
     with mysql_conn() as conn:
         cur=conn.cursor()
         cur.execute("update pipeline_execution set status=%s,end_time=NOW(),total_records=%s,good_records=%s,bad_records=%s,error_message=%s where batch_id=%s",("FAILED",total_records,good_records,bad_records,error_message,batch_id))
