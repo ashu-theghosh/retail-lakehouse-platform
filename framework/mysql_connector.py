@@ -17,6 +17,7 @@ def mysql_conn():
         yield conn
     except Exception as e:
         print(f"Error in mysql connection {e}")
+        raise
     finally:
         conn.close()
 
@@ -44,13 +45,18 @@ def fetch_eligible_pipelines():
 
 
 def insert_execution(pipeline_name):
-    with mysql_conn() as conn:
-        cur=conn.cursor()
-        cur.execute("insert into pipeline_execution(pipeline_name,status,start_time) values(%s,%s,NOW())",(pipeline_name,"RUNNING"))
-        batch_id=cur.lastrowid
-        conn.commit()
-        cur.close()
-    return batch_id
+       with mysql_conn() as conn:
+         cur=conn.cursor()
+         try:
+            cur.execute("insert into pipeline_execution(pipeline_name,status,start_time) values(%s,%s,NOW())",(pipeline_name, "RUNNING"))
+            batch_id=cur.lastrowid
+            conn.commit()
+            return batch_id
+         except Exception as e:
+            conn.rollback()
+            raise
+         finally:
+            cur.close()
 
 def update_completed(batch_id,total_records,good_records,bad_records):
     with mysql_conn() as conn:
