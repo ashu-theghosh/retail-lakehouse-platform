@@ -13,3 +13,6 @@ def separate_corrupt_records(df):
           corrupt_count=corrupt_df.count()
           return clean_df,corrupt_df,corrupt_count
       return df,None,0
+  
+def read_delta(spark, raw_path):
+    return spark.read.format("delta").load(raw_path) 

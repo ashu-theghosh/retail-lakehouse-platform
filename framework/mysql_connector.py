@@ -33,7 +33,7 @@ def fetch_eligible_pipelines():
 def fetch_eligible_silver_pipelines():
     with mysql_conn() as conn:
         cur=conn.cursor(sql.cursors.DictCursor)
-        cur.execute("select * from silver_config where active_flag=1")
+        cur.execute("select * from silver_config where is_active=1")
         rows=cur.fetchall()
         cur.close()
     return rows
