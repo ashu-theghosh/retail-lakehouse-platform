@@ -30,7 +30,13 @@ def fetch_eligible_pipelines():
         cur.close()
     return rows
 
-
+def fetch_eligible_silver_pipelines():
+    with mysql_conn() as conn:
+        cur=conn.cursor(sql.cursors.DictCursor)
+        cur.execute("select * from silver_config where active_flag=1")
+        rows=cur.fetchall()
+        cur.close()
+    return rows
 
 '''def insert_pipeline_execution(pipeline_name=None,status,total_records=None,good_records=None,bad_records=None,error_message=None):
     with mysql_conn() as conn:
