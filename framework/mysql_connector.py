@@ -71,9 +71,38 @@ def update_completed(batch_id,total_records,good_records,bad_records):
         conn.commit()
         cur.close()
 
-def update_failed(batch_id,error_message,total_records=0,good_records=0,bad_records=0,):
+def update_failed(batch_id,error_message,total_records=0,good_records=0,bad_records=0):
     with mysql_conn() as conn:
         cur=conn.cursor()
         cur.execute("update pipeline_execution set status=%s,end_time=NOW(),total_records=%s,good_records=%s,bad_records=%s,error_message=%s where batch_id=%s",("FAILED",total_records,good_records,bad_records,error_message,batch_id))
+        conn.commit()
+        cur.close()
+
+
+def insert_silver_execution(pipeline_name=None):
+    with mysql_conn() as conn:
+        cur=conn.cursor()
+        try:
+            cur.execute("insert into silver_pipeline_execution(pipeline_name,status,start_time) values(%s,%s,NOW())",(pipeline_name, "RUNNING"))
+            silver_batch_id=cur.lastrowid
+            conn.commit()
+            return silver_batch_id
+        except Exception as e:
+            conn.rollback()
+            raise
+        finally:
+            cur.close()
+
+def silver_update_completed(silver_batch_id,input_record,output_records,duplicate_removed_record):
+    with mysql_conn() as conn:
+        cur=conn.cursor()
+        cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s where silver_batch_id=%s",("COMPLETED",input_record,output_record,duplicate_removed_records,silver_batch_id))
+        conn.commit()
+        cur.close()
+
+def silver_update_failed(silver_batch_id,error_message,input_record=0,output_record=0,duplicate_removed_record=0):
+    with mysql_conn() as conn:
+        cur=conn.cursor()
+        cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s,error_message=%s where silver_batch_id=%s",("FAILED",input_record,output_record,duplicate_removed_record,error_message,silver_batch_id))
         conn.commit()
         cur.close()
