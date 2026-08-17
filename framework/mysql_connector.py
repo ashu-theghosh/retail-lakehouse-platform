@@ -79,11 +79,11 @@ def update_failed(batch_id,error_message,total_records=0,good_records=0,bad_reco
         cur.close()
 
 
-def insert_silver_execution(pipeline_name=None):
+def insert_silver_execution(table_name=None):
     with mysql_conn() as conn:
         cur=conn.cursor()
         try:
-            cur.execute("insert into silver_pipeline_execution(pipeline_name,status,start_time) values(%s,%s,NOW())",(pipeline_name, "RUNNING"))
+            cur.execute("insert into silver_pipeline_execution(table_name,status,start_time) values(%s,%s,NOW())",(table_name, "RUNNING"))
             silver_batch_id=cur.lastrowid
             conn.commit()
             return silver_batch_id
@@ -93,16 +93,16 @@ def insert_silver_execution(pipeline_name=None):
         finally:
             cur.close()
 
-def silver_update_completed(silver_batch_id,input_record,output_records,duplicate_removed_record):
+def silver_update_completed(silver_batch_id,input_record,output_record,duplicate_removed_record,dedup_used=False,explode_used=False):
     with mysql_conn() as conn:
         cur=conn.cursor()
-        cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s where silver_batch_id=%s",("COMPLETED",input_record,output_record,duplicate_removed_records,silver_batch_id))
+        cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s,dedup_used=%s,explode_used=%s where silver_batch_id=%s",("COMPLETED",input_record,output_record,duplicate_removed_record,dedup_used,explode_used,silver_batch_id))
         conn.commit()
         cur.close()
 
-def silver_update_failed(silver_batch_id,error_message,input_record=0,output_record=0,duplicate_removed_record=0):
+def silver_update_failed(silver_batch_id,error_message,input_record=0,output_record=0,duplicate_removed_record=0,dedup_used=False,explode_used=False):
     with mysql_conn() as conn:
         cur=conn.cursor()
-        cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s,error_message=%s where silver_batch_id=%s",("FAILED",input_record,output_record,duplicate_removed_record,error_message,silver_batch_id))
+        cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s,error_message=%s,dedup_used=%s,explode_used=%s where silver_batch_id=%s",("FAILED",input_record,output_record,duplicate_removed_record,error_message,dedup_used,explode_used,silver_batch_id))
         conn.commit()
         cur.close()
