@@ -38,6 +38,22 @@ def fetch_eligible_silver_pipelines():
         cur.close()
     return rows
 
+def fetch_eligible_gold_pipelines():
+    with mysql_conn() as conn:
+        cur=conn.cursor(sql.cursors.DictCursor)
+        cur.execute("select * from gold_config where is_active=1")
+        rows=cur.fetchall()
+        cur.close()
+    return rows
+
+def fetch_eligible_gold_pipelines_source(gold_pipeline_id):
+    with mysql_conn() as conn:
+        cur=conn.cursor(sql.cursors.DictCursor)
+        cur.execute("select * from gold_pipeline_sources where gold_pipeline_id=%s",(gold_pipeline_id,))
+        rows=cur.fetchall()
+        cur.close()
+    return rows
+
 '''def insert_pipeline_execution(pipeline_name=None,status,total_records=None,good_records=None,bad_records=None,error_message=None):
     with mysql_conn() as conn:
         cur=conn.cursor()
