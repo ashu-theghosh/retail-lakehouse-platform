@@ -140,13 +140,13 @@ def insert_gold_execution(table_name=None):
 def gold_update_completed(gold_batch_id,output_record):
     with mysql_conn() as conn:
         cur=conn.cursor()
-        cur.execute("update gold_pipeline_execution set status=%s,end_time=NOW(),output_record=%s where gold_batch_id=%s",("COMPLETED",output_record,gold_batch_id))
+        cur.execute("update gold_pipeline_execution set status=%s,end_time=NOW(),output_record=%s where gold_id=%s",("COMPLETED",output_record,gold_batch_id))
         conn.commit()
         cur.close()
 
 def gold_update_failed(gold_batch_id,error_message,output_record=0):
     with mysql_conn() as conn:
         cur=conn.cursor()
-        cur.execute("update gold_pipeline_execution set status=%s,end_time=NOW(),output_record=%s,error_message=%s where gold_batch_id=%s",("FAILED",output_record,error_message,gold_batch_id))
+        cur.execute("update gold_pipeline_execution set status=%s,end_time=NOW(),output_record=%s,error_msg=%s where gold_id=%s",("FAILED",output_record,error_message,gold_batch_id))
         conn.commit()
         cur.close()
