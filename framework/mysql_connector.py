@@ -122,3 +122,31 @@ def silver_update_failed(silver_batch_id,error_message,input_record=0,output_rec
         cur.execute("update silver_pipeline_execution set status=%s,end_time=NOW(),input_record=%s,output_record=%s,duplicate_removed_record=%s,error_message=%s,dedup_used=%s,explode_used=%s where silver_batch_id=%s",("FAILED",input_record,output_record,duplicate_removed_record,error_message,dedup_used,explode_used,silver_batch_id))
         conn.commit()
         cur.close()
+
+def insert_gold_execution(table_name=None):
+    with mysql_conn() as conn:
+        cur=conn.cursor()
+        try:
+            cur.execute("insert into gold_pipeline_execution(table_name,status,start_time) values(%s,%s,NOW())",(table_name, "RUNNING"))
+            gold_batch_id=cur.lastrowid
+            conn.commit()
+            return gold_batch_id
+        except Exception as e:
+            conn.rollback()
+            raise
+        finally:
+            cur.close()
+
+def gold_update_completed(gold_batch_id,output_record):
+    with mysql_conn() as conn:
+        cur=conn.cursor()
+        cur.execute("update gold_pipeline_execution set status=%s,end_time=NOW(),output_record=%s where gold_batch_id=%s",("COMPLETED",output_record,gold_batch_id))
+        conn.commit()
+        cur.close()
+
+def gold_update_failed(gold_batch_id,error_message,output_record=0):
+    with mysql_conn() as conn:
+        cur=conn.cursor()
+        cur.execute("update gold_pipeline_execution set status=%s,end_time=NOW(),output_record=%s,error_message=%s where gold_batch_id=%s",("FAILED",output_record,error_message,gold_batch_id))
+        conn.commit()
+        cur.close()
