@@ -80,6 +80,22 @@ def insert_execution(pipeline_name):
          finally:
             cur.close()
 
+def update_watermark(pipeline_name, watermark_value):
+    with mysql_conn() as conn:
+        cur = conn.cursor()
+        try:
+            cur.execute(
+                """
+                UPDATE pipeline_config
+                SET last_watermark = %s
+                WHERE pipeline_name = %s
+                """,
+                (watermark_value, pipeline_name)
+            )
+            conn.commit()
+        finally:
+            cur.close()
+
 def update_completed(batch_id,total_records,good_records,bad_records):
     with mysql_conn() as conn:
         cur=conn.cursor()
